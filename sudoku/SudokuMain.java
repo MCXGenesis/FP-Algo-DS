@@ -12,7 +12,7 @@ public class SudokuMain extends JFrame {
     JButton btnNewGame = new JButton("New Game");
 
     // Constructor
-    public Sudoku() {
+    public SudokuMain() {
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
