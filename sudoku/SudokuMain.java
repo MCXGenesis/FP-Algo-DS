@@ -1,5 +1,8 @@
 package sudoku;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 /**
  * The main Sudoku program
@@ -24,6 +27,14 @@ public class SudokuMain extends JFrame {
 
         // Initialize the game board to start the game
         board.newGame();
+        
+        // 1: New Game
+        btnNewGame.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                board.newGame();
+                System.out.println("New game");
+            }
+        });
 
         pack();     // Pack the UI components, instead of using setSize()
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // to handle window-closing
