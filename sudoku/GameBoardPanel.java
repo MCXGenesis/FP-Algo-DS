@@ -1,6 +1,8 @@
 package sudoku;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class GameBoardPanel extends JPanel {
@@ -81,38 +83,105 @@ public class GameBoardPanel extends JPanel {
 
     // [TODO 2] Define a Listener Inner Class for all the editable Cells
     // .........
-    private class CellInputListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Get a reference of the JTextField that triggers this action event
-            Cell sourceCell = (Cell)e.getSource();
+private class CellInputListener implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Get a reference of the JTextField that triggers this action event
+        Cell sourceCell = (Cell)e.getSource();
 
-            // Retrieve the int entered
-            int numberIn = Integer.parseInt(sourceCell.getText());
-            // For debugging
-            System.out.println("You entered " + numberIn);
+        // Retrieve the int entered
+        int numberIn = Integer.parseInt(sourceCell.getText());
+        // For debugging
+        System.out.println("You entered " + numberIn);
 
-            /*
-             * [TODO 5] (later - after TODO 3 and 4)
-             * Check the numberIn against sourceCell.number.
-             * Update the cell status sourceCell.status,
-             * and re-paint the cell via sourceCell.paint().
-             */
-            if (numberIn == sourceCell.number) {
-                sourceCell.status = CellStatus.CORRECT_GUESS;
-            } else {
-                sourceCell.status = CellStatus.WRONG_GUESS;
+        // Check for conflicts in the row, column, and sub-grid
+        boolean conflictDetected = false;
+        //List<Cell> conflictingCells = new ArrayList<>(); // List to hold conflicting cells
+
+        // Check row and column for conflicts
+        for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
+            if (i != sourceCell.col && cells[sourceCell.row][i].getText().equals(String.valueOf(numberIn))) {
+                conflictDetected = true;
+                cells[sourceCell.row][i].status = CellStatus.WRONG_GUESS; // Mark conflicting cell
+                ///conflictingCells.add(cells[sourceCell.row][i]); // Add to list
             }
-            sourceCell.paint();   // re-paint this cell based on its status
-
-            /*
-             * [TODO 6] (later)
-             * Check if the player has solved the puzzle after this move,
-             *   by calling isSolved(). Put up a congratulation JOptionPane, if so.
-             */
-            if (isSolved()) {
-                JOptionPane.showMessageDialog(null, "Congratulations! You have solved the puzzle!");
+            if (i != sourceCell.row && cells[i][sourceCell.col].getText().equals(String.valueOf(numberIn))) {
+                conflictDetected = true;
+                cells[i][sourceCell.col].status = CellStatus.WRONG_GUESS; // Mark conflicting cell
+                //conflictingCells.add(cells[i][sourceCell.col]); // Add to list
             }
         }
+
+        // Check sub-grid for conflicts
+        int startRow = (sourceCell.row / SudokuConstants.SUBGRID_SIZE) * SudokuConstants.SUBGRID_SIZE;
+        int startCol = (sourceCell.col / SudokuConstants.SUBGRID_SIZE) * SudokuConstants.SUBGRID_SIZE;
+        for (int r = startRow; r < startRow + SudokuConstants.SUBGRID_SIZE; r++) {
+            for (int c = startCol; c < startCol + SudokuConstants.SUBGRID_SIZE; c++) {
+                if (r != sourceCell.row && c != sourceCell.col && cells[r][c].getText().equals(String.valueOf(numberIn))) {
+                    conflictDetected = true;
+                    cells[r][c].status = CellStatus.WRONG_GUESS; // Mark conflicting cell
+                    //conflictingCells.add(cells[r][c]); // Add to list
+                }
+            }
+        }
+
+        // Update the status of the source cell
+        if (conflictDetected) {
+            sourceCell.status = CellStatus.WRONG_GUESS;
+        } else if (numberIn == sourceCell.number) {
+            sourceCell.status = CellStatus.CORRECT_GUESS;
+        } else {
+            sourceCell.status = CellStatus.WRONG_GUESS;
+        }
+
+        // Repaint all affected cells
+        for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
+            cells[sourceCell.row][i].paint();
+            cells[i][sourceCell.col].paint();
+        }
+        for (int r = startRow; r < startRow + SudokuConstants.SUBGRID_SIZE; r++) {
+            for (int c = startCol; c < startCol + SudokuConstants.SUBGRID_SIZE; c++) {
+                cells[r][c].paint();
+            }
+        }
+        sourceCell.paint();   // Repaint this cell based on its status
+
+        // If there are conflicts, set a timer to reset the status after a delay
+        if (conflictDetected) {
+            Timer timer = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    // Reset status of all cells that were marked as wrong guess
+                    for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
+                        if (cells[sourceCell.row][i].status == CellStatus.WRONG_GUESS) {
+                            cells[sourceCell.row][i].status = CellStatus.GIVEN; // Reset status
+                            cells[sourceCell.row][i].paint(); // Repaint to reflect the change
+                        }
+                        if (cells[i][sourceCell.col].status == CellStatus.WRONG_GUESS) {
+                            cells[i][sourceCell.col].status = CellStatus.GIVEN; // Reset status
+                            cells[i][sourceCell.col].paint(); // Repaint to reflect the change
+                        }
+                    }
+                    for (int r = startRow; r < startRow + SudokuConstants.SUBGRID_SIZE; r++) {
+                        for (int c = startCol; c < startCol + SudokuConstants.SUBGRID_SIZE; c++) {
+                            if (cells[r][c].status == CellStatus.WRONG_GUESS) {
+                                cells[r][c].status = CellStatus.GIVEN; // Reset status
+                                cells[r][c].paint(); // Repaint to reflect the change
+                            }
+                        }
+                    }
+                    sourceCell.status = CellStatus.TO_GUESS; // Reset source cell status
+                    sourceCell.paint(); // Repaint to reflect the change
+                }
+            });
+            timer.setRepeats(false); // Only execute once
+            timer.start(); // Start the timer
+        }
+
+        // Check if the player has solved the puzzle after this move
+        if (isSolved()) {
+            JOptionPane.showMessageDialog(null, "Congratulations! You have solved the puzzle!");
+        }
     }
+}
 }
