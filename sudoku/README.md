@@ -1,6 +1,6 @@
 ### SUDOKU
 
-1. Reset/Restart the game.
+1. Reset/Restart the game. 
 2. A good Sudoku engine shall accept any "valid" number at the time of input (no duplicate in row, column and sub-grid), but signal a conflict whenever it is detected. Highlight the conflicting cells.
 3. After entering a guess, highlight all boxes with the same value of the guess and signal the conflicting cells if any.
 4. Choice of puzzles and difficulty levels (e.g., easy, intermediate, difficult).

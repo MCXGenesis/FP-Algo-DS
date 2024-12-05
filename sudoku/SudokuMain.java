@@ -71,13 +71,45 @@ public class SudokuMain extends JFrame {
         }
     }
 
-    /** The entry main() entry method */
+/** The entry main() entry method */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SudokuMain();
+                showWelcomePage(); // Tampilkan halaman sambutan terlebih dahulu
             }
         });
+    }
+
+    /**
+     * Menampilkan halaman sambutan untuk memilih permainan
+     */
+    private static void showWelcomePage() {
+        String[] options = {"Sudoku", "Tic Tac Toe", "About", "Exit"};
+        String choice = (String) JOptionPane.showInputDialog(
+            null,
+            "Welcome! Please choose an option:",
+            "Welcome Menu",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            options,
+            options[0] // Default pilihan: Sudoku
+        );
+
+        // Pilihan pengguna
+        if (choice == null || choice.equals("Exit")) {
+            System.exit(0); // Keluar dari program
+        } else if (choice.equals("Sudoku")) {
+            new SudokuMain(); // Buka permainan Sudoku
+        } else if (choice.equals("Tic Tac Toe")) {
+            JOptionPane.showMessageDialog(null, "Tic Tac Toe is under construction!", "Tic Tac Toe", JOptionPane.INFORMATION_MESSAGE);
+        } else if (choice.equals("About")) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Sudoku & Tic Tac Toe\nCreated by [Your Name]",
+                "About",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }
 }
