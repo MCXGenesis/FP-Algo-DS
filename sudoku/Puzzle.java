@@ -17,7 +17,14 @@ public class Puzzle { //superclass nya adalah subject
     // Generate a new puzzle given the number of cells to be guessed, which can be used
     //  to control the difficulty level.
     // This method shall set (or update) the arrays numbers and isGiven
-    public void newPuzzle(int cellsToGuess) {
+    public void newPuzzle(int difficulty) {
+        int clues;
+        switch (difficulty){
+            case 1: clues = 70; break; //easy
+            case 2: clues = 60; break; // medium
+            case 3: clues = 40; break; //hard
+            default: clues = 70; //default ke easy
+        }
         // I hardcode a puzzle here for illustration and testing.
         int[][] hardcodedNumbers =
                        {{5, 3, 4, 6, 7, 8, 9, 1, 2},
@@ -36,25 +43,41 @@ public class Puzzle { //superclass nya adalah subject
                 numbers[row][col] = hardcodedNumbers[row][col];
             }
         }
+        // Set semua kotak sebagai tidak diberikan (false) 
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) { 
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) { 
+                isGiven[row][col] = false; 
+            } 
+        } 
 
-        boolean[][] hardcodedIsGiven =
-                {{true, true, true, true, true, false, true, true, true},
-                        {true, true, true, true, true, true, true, true, false},
-                        {true, true, true, false, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true}};
+        //boolean[][] hardcodedIsGiven =
+                //{{true, true, true, true, true, false, true, true, true},
+                        //{true, true, true, true, true, true, true, true, false},
+                        //{true, true, true, false, true, true, true, true, true},
+                        //{true, true, true, true, true, true, true, true, true},
+                        //{true, true, true, true, true, true, true, true, true},
+                        //{true, true, true, true, true, true, true, true, true},
+                        //{true, true, true, true, true, true, true, true, true},
+                        //{true, true, true, true, true, true, true, true, true},
+                        //{true, true, true, true, true, true, true, true, true}};
 
         // Copy from hardcodedIsGiven into array "isGiven"
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                isGiven[row][col] = hardcodedIsGiven[row][col];
+        //for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            //for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                //isGiven[row][col] = hardcodedIsGiven[row][col];
+
+                // Randomly tentukan kotak yang akan diberikan berdasarkan jumlah clues 
+            java.util.Random rand = new java.util.Random(); 
+            for (int i = 0; i < clues; i++) { 
+                int row, col; 
+                do { 
+                    row = rand.nextInt(SudokuConstants.GRID_SIZE); 
+                    col = rand.nextInt(SudokuConstants.GRID_SIZE); 
+                } while (isGiven[row][col]); // Hindari mengganti kotak yang sudah diisi 
+                isGiven[row][col] = true; 
             }
         }
-    }
+    
 
     //(For advanced students) use singleton design pattern for this class
 }
