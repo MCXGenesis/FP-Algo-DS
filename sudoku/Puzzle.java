@@ -80,4 +80,5 @@ public class Puzzle { //superclass nya adalah subject
     
 
     //(For advanced students) use singleton design pattern for this class
+
 }
