@@ -1,6 +1,8 @@
 package sudoku;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 /**
  * The Cell class model the cells of the Sudoku puzzle, by customizing (subclass)
@@ -35,6 +37,30 @@ public class Cell extends JTextField {
         // Inherited from JTextField: Beautify all the cells once for all
         super.setHorizontalAlignment(JTextField.CENTER);
         super.setFont(FONT_NUMBERS);
+
+        // Tambahkan listener untuk input angka
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (!isEditable()) return; // Abaikan jika Cell tidak bisa diedit
+
+                try {
+                    int enteredNumber = Integer.parseInt(getText());
+                    if (enteredNumber == number) { // Jika input benar
+                        status = CellStatus.CORRECT_GUESS;
+                        setBackground(BG_CORRECT_GUESS);
+                        SoundPlayer.playSound("C:/Users/Lailatul Fitaliqoh/IdeaProjects/FP-Algo-DS/sudoku/benar sudoku.wav"); // Mainkan suara benar
+                    } else { // Jika input salah
+                        status = CellStatus.WRONG_GUESS;
+                        setBackground(BG_WRONG_GUESS);
+                        SoundPlayer.playSound("C:/Users/Lailatul Fitaliqoh/IdeaProjects/FP-Algo-DS/sudoku/salah sudoku.wav"); // Mainkan suara salah
+                    }
+                } catch (NumberFormatException ex) {
+                    // Jika input bukan angka, kembalikan ke warna default
+                    setBackground(BG_TO_GUESS);
+                }
+            }
+        });
     }
 
     /** Reset this cell for a new game, given the puzzle number and isGiven */
