@@ -1,6 +1,8 @@
 package sudoku;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.concurrent.Flow;
 
 import javax.swing.*;
@@ -17,9 +19,34 @@ public class SudokuMain extends JFrame {
 
     // Constructor
     public SudokuMain() {
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximize the frame
+        setUndecorated(true); // Remove window decorations for fullscreen mode
+        setMinimumSize(new Dimension(800 ,600));
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
         cp.add(board, BorderLayout.CENTER);
+
+               // Add the game board panel to the center with a wrapper
+               JPanel boardWrapper = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Ensure the board remains square
+                    int size = Math.min(getWidth(), getHeight());
+                    board.setBounds((getWidth() - size) / 2, (getHeight() - size) / 2, size, size);
+                }
+            };
+            //boardWrapper.setLayout(null); // Use null layout for manual resizing
+            boardWrapper.add(board); // Add the board to the wrapper
+            cp.add(boardWrapper, BorderLayout.CENTER);
+    
+            // Add a resize listener to keep the board square
+            addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    boardWrapper.repaint(); // Repaint on resize to update the square aspect ratio
+                }
+            });
 
         // Menambahkan dropdown untuk memilih mode tampilan
         modeSelector = new JComboBox<>(new String[]{"Light Mode", "Dark Mode"});
@@ -137,5 +164,3 @@ public class SudokuMain extends JFrame {
         SwingUtilities.invokeLater(() -> showWelcomePage());
     }
 }
-
-
