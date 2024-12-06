@@ -30,7 +30,6 @@ public class GameBoardPanel extends JPanel {
                 cells[row][col] = new Cell(row, col);
                 super.add(cells[row][col]);   // JPanel
             }
-
         }
 
         // [TODO 3] Allocate a common listener as the ActionEvent listener for all the
@@ -185,5 +184,4 @@ private class CellInputListener implements ActionListener {
         }
     }
 }
-
 }
