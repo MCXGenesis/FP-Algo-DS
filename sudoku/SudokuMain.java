@@ -1,6 +1,8 @@
 package sudoku;
 
 import java.awt.*;
+import java.util.concurrent.Flow;
+
 import javax.swing.*;
 
 /**
@@ -11,14 +13,12 @@ public class SudokuMain extends JFrame {
 
     // private variables
     GameBoardPanel board = new GameBoardPanel();
-    JButton btnNewGame = new JButton("New Game");
     JComboBox<String> modeSelector; // Dropdown untuk memilih mode tampilan
 
     // Constructor
     public SudokuMain() {
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
-
         cp.add(board, BorderLayout.CENTER);
 
         // Menambahkan dropdown untuk memilih mode tampilan
@@ -27,12 +27,26 @@ public class SudokuMain extends JFrame {
 
         // Panel bawah untuk tombol dan dropdown
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(btnNewGame, BorderLayout.WEST);
         bottomPanel.add(modeSelector, BorderLayout.EAST);
         cp.add(bottomPanel, BorderLayout.SOUTH);
 
-        // Event handler untuk tombol New Game
-        btnNewGame.addActionListener(e -> showDifficultyDialog());
+        // Menu bar
+        JMenuBar menuBar = new JMenuBar();
+
+        // File Menu
+        JMenu menuFile = new JMenu("Menu");
+        JMenuItem menuNewGame = new JMenuItem("New Game");
+        JMenuItem menuExitGame = new JMenuItem("Exit");
+        menuExitGame.addActionListener(e -> System.exit(0));
+        menuNewGame.addActionListener(e -> showDifficultyDialog());
+
+        menuFile.add(menuNewGame);
+        menuFile.addSeparator();
+        menuFile.add(menuExitGame);
+
+        // Add "File" menu to the menu bar
+        menuBar.add(menuFile);
+        cp.add(menuBar, BorderLayout.PAGE_START);
 
         pack(); // Pack the UI components, instead of using setSize()
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // to handle window-closing
@@ -46,15 +60,11 @@ public class SudokuMain extends JFrame {
     private void changeMode(String mode) {
         if (mode.equals("Dark Mode")) {
             getContentPane().setBackground(Color.DARK_GRAY);
-            btnNewGame.setBackground(Color.GRAY);
-            btnNewGame.setForeground(Color.WHITE);
             modeSelector.setBackground(Color.GRAY);
             modeSelector.setForeground(Color.WHITE);
             board.setBackground(Color.BLACK); // Sesuaikan dengan implementasi `GameBoardPanel`
         } else {
             getContentPane().setBackground(Color.WHITE);
-            btnNewGame.setBackground(Color.LIGHT_GRAY);
-            btnNewGame.setForeground(Color.BLACK);
             modeSelector.setBackground(Color.WHITE);
             modeSelector.setForeground(Color.BLACK);
             board.setBackground(Color.WHITE); // Sesuaikan dengan implementasi `GameBoardPanel`
