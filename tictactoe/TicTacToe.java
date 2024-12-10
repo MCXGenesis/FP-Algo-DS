@@ -12,7 +12,8 @@ import javax.swing.*;
 public class TicTacToe extends JPanel {
     @Serial
     private static final long serialVersionUID = 1L; // to prevent serializable warning
-
+    private final JLabel timerLabel; // Label untuk menampilkan timer
+    
     // Define named constants for the drawing graphics
     public static final String TITLE = "Tic Tac Toe";
     public static final Color COLOR_BG = Color.WHITE;
@@ -20,16 +21,24 @@ public class TicTacToe extends JPanel {
     public static final Color COLOR_CROSS = new Color(239, 105, 80);  // Red #EF6950
     public static final Color COLOR_NOUGHT = new Color(64, 154, 225); // Blue #409AE1
     public static final Font FONT_STATUS = new Font("OCR A Extended", Font.PLAIN, 14);
-
+    
     // Define game objects
     private Board board;         // the game board
     private State currentState;  // the current state of the game
     private Seed currentPlayer;  // the current player
     private final JLabel statusBar;    // for displaying status message
     private int gameMode; // 1 untuk mode 1 pemain, 2 untuk mode 2 pemain
+    private int timeLeft; // Time left for the current player
+    private Timer countdownTimer; // Timer to update the countdown
+    private final int TURN_TIME_LIMIT = 10; // 10 seconds per turn
 
     /** Constructor to set up the UI and game components */
     public TicTacToe() {
+      timerLabel = new JLabel("Time left: " + TURN_TIME_LIMIT + "s");
+      timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+      timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      timerLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+      super.add(timerLabel, BorderLayout.PAGE_START);
         String[] options = {"1 Player", "2 Players"};
         int mode = JOptionPane.showOptionDialog(null, 
             "Pilih mode permainan", "Mode Permainan", 
@@ -119,10 +128,39 @@ public class TicTacToe extends JPanel {
     /** Initialize the game (run once) */
     public void initGame() {
         board = new Board();  // allocate the game-board
+
+        // Initialize the timer to update the countdown every second
+        countdownTimer = new Timer(1000, e -> {
+         if (currentState == State.PLAYING && timeLeft > 0) {
+             timeLeft--;
+             timerLabel.setText("Time left: " + timeLeft + "s"); // Update timer label
+             repaint();
+         } else {
+             if (timeLeft == 0) {
+                 switchPlayer();
+             }
+         }
+     });
     }
+
+    /** Start or reset the timer when a new turn begins */
+    private void startTurnTimer() {
+        timeLeft = TURN_TIME_LIMIT; // Reset the timer for a new turn
+        countdownTimer.start(); // Start the countdown timer
+    }
+
+    /** Switch the player when the timer runs out or after a valid move */
+    private void switchPlayer() {
+         if (currentState == State.PLAYING) {
+            currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+            startTurnTimer();
+            statusBar.setText((currentPlayer == Seed.CROSS) ? "X's Turn" : "O's Turn");
+      }
+   }
 
     /** Reset the game-board contents and the current-state, ready for new game */
     public void newGame() {
+      countdownTimer.stop();
         for (int row = 0; row < Board.ROWS; ++row) {
             for (int col = 0; col < Board.COLS; ++col) {
                 board.cells[row][col].content = Seed.NO_SEED; // all cells empty
@@ -130,12 +168,18 @@ public class TicTacToe extends JPanel {
         }
         currentPlayer = Seed.NOUGHT;    // O plays first
         currentState = State.PLAYING;  // ready to play
+        startTurnTimer();  // Start the timer for the first player
     }
 
     @Override
-    public void paintComponent(Graphics g) {  // Callback via repaint()
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         setBackground(COLOR_BG); // set its background color
+    
+        // Display the timer at the top of the game board
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setColor(Color.BLACK);
+        g.drawString("Time left: " + timeLeft + "s", Board.CANVAS_WIDTH / 2 - 60, 30); // Adjust position based on board size
     
         board.paint(g);  // ask the game board to paint itself
     
@@ -159,7 +203,7 @@ public class TicTacToe extends JPanel {
             statusBar.setText("'O' Won! Click to play again.");
         }
     }
-   
+
     /** The entry "main" method */
     public static void main(String[] args) {
         // Run GUI construction codes in Event-Dispatching thread for thread safety
