@@ -1,11 +1,13 @@
 package tictactoe;
+
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
 /**
  * This enum encapsulates all the sound effects of a game, so as to separate the sound playing
  * codes from the game codes.
@@ -19,9 +21,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * For Eclipse, place the audio file under "src", which will be copied into "bin".
  */
 public enum SoundEffect {
-   EAT_FOOD("audio/eatfood.wav"),
-   EXPLODE("audio/explode.wav"),
-   DIE("audio/die.wav");
+   PLAYER_X("tictactoe/XO.wav"),
+   PLAYER_O("tictactoe/PLAYER_O.wav"),
+   WINNER("tictactoe/Winner.wav"),
+   DRAW("tictactoe/Draw.wav");
 
    /** Nested enumeration for specifying volume */
    public static enum Volume {
@@ -34,22 +37,14 @@ public enum SoundEffect {
    private Clip clip;
 
    /** Private Constructor to construct each element of the enum with its own sound file. */
-   private SoundEffect(String soundFileName) {
+   private SoundEffect(String soundFilePath) {
       try {
-         // Use URL (instead of File) to read from disk and JAR.
-         URL url = this.getClass().getClassLoader().getResource(soundFileName);
-         // Set up an audio input stream piped from the sound file.
-         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
-         // Get a clip resource.
-         clip = AudioSystem.getClip();
-         // Open audio clip and load samples from the audio input stream.
-         clip.open(audioInputStream);
-      } catch (UnsupportedAudioFileException e) {
-         e.printStackTrace();
-      } catch (IOException e) {
-         e.printStackTrace();
-      } catch (LineUnavailableException e) {
-         e.printStackTrace();
+         File soundFile = new File(soundFilePath);
+         AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+         this.clip = AudioSystem.getClip();  // Use 'this.clip' to assign to enum's clip
+         this.clip.open(audioStream);
+      } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+         System.err.println("Error playing sound: " + e.getMessage());
       }
    }
 
@@ -57,14 +52,14 @@ public enum SoundEffect {
    public void play() {
       if (volume != Volume.MUTE) {
          if (clip.isRunning())
-            clip.stop();   // Stop the player if it is still running
-         clip.setFramePosition(0); // rewind to the beginning
-         clip.start();     // Start playing
+            clip.stop();  // Stop the player if it is still running
+         clip.setFramePosition(0); // Rewind to the beginning
+         clip.start(); // Start playing
       }
    }
 
    /** Optional static method to pre-load all the sound files. */
    static void initGame() {
-      values(); // calls the constructor for all the elements
+      values(); // Calls the constructor for all the elements
    }
 }
