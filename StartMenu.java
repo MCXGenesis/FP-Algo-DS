@@ -1,6 +1,7 @@
 import javax.swing.*;
 
 import sudoku.SudokuMain;
+import tictactoe.TicTacToe;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -49,7 +50,7 @@ public class StartMenu extends JFrame {
         panel.add(buttonContainer);
 
         // Buttons
-        String[] buttonNames = {"Sudoku", "Continue", "Exit"};
+        String[] buttonNames = {"Sudoku", "Tictactoe", "Exit"};
         for (String buttonName : buttonNames) {
             JButton button = new JButton(buttonName);
             button.setFont(customFont.deriveFont(24f));
@@ -76,8 +77,8 @@ public class StartMenu extends JFrame {
                         case "Sudoku":
                             SwingUtilities.invokeLater(() -> new SudokuMain().showWelcomePage());
                             break;
-                        case "Continue":
-                            JOptionPane.showMessageDialog(null, "Continuing Game...");
+                        case "Tictactoe":
+                            SwingUtilities.invokeLater(() -> new TicTacToe().show());
                             break;
                         case "Exit":
                             System.exit(0);
