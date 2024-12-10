@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import sudoku.SoundPlayer;
 import sudoku.SudokuMain;
 import tictactoe.TicTacToe;
 
@@ -21,14 +22,16 @@ public class StartMenu extends JFrame {
 
         // Background color and panel
         JPanel panel = new JPanel();
-        panel.setBackground(Color.BLACK);
+        panel.setBackground(Color.WHITE);
         panel.setBounds(0, 0, 800, 600);
         panel.setLayout(null);
         add(panel); // Add the panel to 'this' JFrame
 
         // Custom font (fallback to a default)
-        Font customFont;
+        Font customFont, titleFont = null;
         try {
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/fonts/OMORI_GAME2.ttf")).deriveFont(96f);
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(titleFont);
             customFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/fonts/OMORI_GAME2.ttf")).deriveFont(36f);
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
         } catch (Exception e) {
@@ -37,23 +40,25 @@ public class StartMenu extends JFrame {
 
         // Title
         JLabel title = new JLabel("WELCOME", SwingConstants.CENTER);
-        title.setForeground(Color.WHITE);
-        title.setFont(customFont);
-        title.setBounds(200, 50, 400, 50);
+        title.setForeground(Color.BLACK);
+        title.setFont(titleFont);
+        title.setBounds(200, 50, 400, 100);
         panel.add(title);
+
+        //Supporting text
 
         // Button container
         JPanel buttonContainer = new JPanel();
-        buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        buttonContainer.setBackground(Color.BLACK);
-        buttonContainer.setBounds(100, 150, 600, 200);
+        buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 20));
+        buttonContainer.setBackground(Color.WHITE);
+        buttonContainer.setBounds(100, 450, 600, 80);
         panel.add(buttonContainer);
 
         // Buttons
         String[] buttonNames = {"Sudoku", "Tictactoe", "Exit"};
         for (String buttonName : buttonNames) {
             JButton button = new JButton(buttonName);
-            button.setFont(customFont.deriveFont(24f));
+            button.setFont(customFont.deriveFont(36f));
             button.setForeground(Color.BLACK);
             button.setBackground(Color.WHITE);
             button.setFocusPainted(false);
@@ -75,7 +80,7 @@ public class StartMenu extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     switch (button.getText()) {
                         case "Sudoku":
-                            SwingUtilities.invokeLater(() -> new SudokuMain().showWelcomePage());
+                            SwingUtilities.invokeLater(() -> new SudokuMain().showDifficultyDialog());
                             break;
                         case "Tictactoe":
                             SwingUtilities.invokeLater(() -> new TicTacToe().show());
@@ -89,6 +94,8 @@ public class StartMenu extends JFrame {
 
             buttonContainer.add(button);
         }
+
+        SoundPlayer.playSound(getName());
 
         // Set the JFrame visible
         setVisible(true);
