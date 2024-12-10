@@ -1,6 +1,7 @@
 package tictactoe;
 
 import java.awt.*;
+
 /**
  * The Board class models the ROWS-by-COLS game board.
  */
@@ -82,6 +83,34 @@ public class Board {
          }
          return State.DRAW; // no empty cell, it's a draw
       }
+   }
+
+   /** Check if a player has won the game */
+   public boolean checkWin(Seed player) {
+      // Check rows for win
+      for (int i = 0; i < ROWS; i++) {
+         if (cells[i][0].content == player && cells[i][1].content == player && cells[i][2].content == player) {
+            return true;
+         }
+      }
+
+      // Check columns for win
+      for (int i = 0; i < COLS; i++) {
+         if (cells[0][i].content == player && cells[1][i].content == player && cells[2][i].content == player) {
+            return true;
+         }
+      }
+
+      // Check diagonals for win
+      if (cells[0][0].content == player && cells[1][1].content == player && cells[2][2].content == player) {
+         return true;
+      }
+      if (cells[0][2].content == player && cells[1][1].content == player && cells[2][0].content == player) {
+         return true;
+      }
+
+      // If no winning condition is met
+      return false;
    }
 
    /** Paint itself on the graphics canvas, given the Graphics context */
