@@ -2,12 +2,14 @@ package tictactoe;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serial;
 import javax.swing.*;
 /**
  * Tic-Tac-Toe: Two-player Graphic version with better OO design.
  * The Board and Cell classes are separated in their own classes.
  */
 public class TicTacToe extends JPanel {
+   @Serial
    private static final long serialVersionUID = 1L; // to prevent serializable warning
 
    // Define named constants for the drawing graphics
@@ -22,15 +24,15 @@ public class TicTacToe extends JPanel {
    private Board board;         // the game board
    private State currentState;  // the current state of the game
    private Seed currentPlayer;  // the current player
-   private JLabel statusBar;    // for displaying status message
+   private final JLabel statusBar;    // for displaying status message
 
-   /** Constructor to setup the UI and game components */
+   /** Constructor to set up the UI and game components */
    public TicTacToe() {
 
       // This JPanel fires MouseEvent
       super.addMouseListener(new MouseAdapter() {
          @Override
-         public void mouseClicked(MouseEvent e) {  // mouse-clicked handler
+         public void mouseClicked(MouseEvent e) {
             int mouseX = e.getX();
             int mouseY = e.getY();
             // Get the row and column clicked
@@ -39,18 +41,34 @@ public class TicTacToe extends JPanel {
 
             if (currentState == State.PLAYING) {
                if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-                     && board.cells[row][col].content == Seed.NO_SEED) {
+                       && board.cells[row][col].content == Seed.NO_SEED) {
                   // Update cells[][] and return the new game state after the move
                   currentState = board.stepGame(currentPlayer, row, col);
                   // Switch player
                   currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+
+                  // Play sound based on the current player
+                  if (currentPlayer == Seed.CROSS) {
+                     SoundEffect.PLAYER_O.play();  // Play sound when X makes a move
+                  } else {
+                     SoundEffect.PLAYER_X.play();  // Play sound when O makes a move
+                  }
+
+                  // Play sound when game is over (win or draw)
+                  if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
+                     SoundEffect.WINNER.play();  // Play winner sound for both players
+                  } else if (currentState == State.DRAW) {
+                     SoundEffect.DRAW.play();    // Play draw sound
+                  }
                }
-            } else {        // game over
-               newGame();  // restart the game
+            } else {  // Game over
+               newGame();  // Restart the game
             }
+
             // Refresh the drawing canvas
             repaint();  // Callback paintComponent().
          }
+
       });
 
       // Setup the status bar (JLabel) to display status message
@@ -65,7 +83,7 @@ public class TicTacToe extends JPanel {
       super.setLayout(new BorderLayout());
       super.add(statusBar, BorderLayout.PAGE_END); // same as SOUTH
       super.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
-            // account for statusBar in height
+      // account for statusBar in height
       super.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
 
       // Set up Game
@@ -120,12 +138,20 @@ public class TicTacToe extends JPanel {
          public void run() {
             JFrame frame = new JFrame(TITLE);
             // Set the content-pane of the JFrame to an instance of main JPanel
-            //frame.setContentPane(new GameMain());
+            frame.setContentPane(new TicTacToe());
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.pack();
             frame.setLocationRelativeTo(null); // center the application window
             frame.setVisible(true);            // show it
          }
       });
+   }
+   public void show() {
+      JFrame frame = new JFrame(TITLE);
+      frame.setContentPane(this); // Menambahkan panel TicTacToe sebagai konten
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.pack();
+      frame.setLocationRelativeTo(null);
+      frame.setVisible(true);
    }
 }
