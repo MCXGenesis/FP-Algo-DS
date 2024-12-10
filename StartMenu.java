@@ -1,18 +1,30 @@
 import javax.swing.*;
-
 import sudoku.SoundPlayer;
 import sudoku.SudokuMain;
 import tictactoe.TicTacToe;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import javax.imageio.*;
+import java.io.*;
 
 public class StartMenu extends JFrame {
     private static final long serialVersionUID = 1L;
+    private float opacity = 0.0f;
+    private Timer fadeStartTimer;
+    private Timer fadeEndTimer;
+    private BufferedImage backg;
 
     public StartMenu() {
-        // Use 'this' as the JFrame
+        try {
+            backg = ImageIO.read(getClass().getResourceAsStream("image/apcb.png"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         setTitle("Welcome to Sudoku");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -86,7 +98,7 @@ public class StartMenu extends JFrame {
                             SwingUtilities.invokeLater(() -> new TicTacToe().show());
                             break;
                         case "Exit":
-                            System.exit(0);
+                            fadeEndTimer.start();
                             break;
                     }
                 }
@@ -98,7 +110,56 @@ public class StartMenu extends JFrame {
         SoundPlayer.playSound(getName());
 
         // Set the JFrame visible
+        setOpacity(0.0f);
         setVisible(true);
+
+        // Initialize and start the fade-in timer
+        fadeStartTimer = new Timer(100, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                opacity += 0.05f;
+                if (opacity >= 1.0f) {
+                    opacity = 1.0f;
+                    fadeStartTimer.stop();
+                }
+                setOpacity(opacity);
+                repaint();
+            }
+        });
+
+        fadeEndTimer = new Timer(100, new ActionListener() { //plus system exit
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                opacity -= 0.05f;
+                if (opacity <= 0.05f) {
+                    opacity = 0f;
+                    fadeEndTimer.stop();
+                    System.exit(0); //exit after fade
+                }
+                setOpacity(opacity);
+                repaint();
+                
+            }
+    
+        });
+
+        fadeStartTimer.start();
+    }
+
+    // @Override
+    // protected void paintComponent(Graphics g) {
+    //     super.paintComponents(g);
+    //     Graphics2D g2d = (Graphics2D) g;
+    //     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+    //     super.paintComponents(g2d);
+    // }
+
+        @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        if (backg != null) {
+            g.drawImage(backg, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 
     public static void main(String[] args) {

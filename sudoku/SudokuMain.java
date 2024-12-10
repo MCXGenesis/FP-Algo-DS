@@ -102,7 +102,7 @@ public class SudokuMain extends JFrame {
     /**
      * Menampilkan dialog pemilihan tingkat kesulitan
      */
-    private void showDifficultyDialog() {
+    public void showDifficultyDialog() {
         String[] options = {"1", "2", "3"}; // 1: Easy, 2: Medium, 3: Hard
         String input = (String) JOptionPane.showInputDialog(
                 this,
