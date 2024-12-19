@@ -154,13 +154,13 @@ public class StartMenu extends JFrame {
     //     super.paintComponents(g2d);
     // }
 
-        @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        if (backg != null) {
-            g.drawImage(backg, 0, 0, getWidth(), getHeight(), this);
-        }
-    }
+    // @Override
+    // public void paint(Graphics g) {
+    //     super.paint(g);
+    //     if (backg != null) {
+    //         g.drawImage(backg, 0, 0, getWidth(), getHeight(), this);
+    //     }
+    // }
 
     public static void main(String[] args) {
         // Run the menu
