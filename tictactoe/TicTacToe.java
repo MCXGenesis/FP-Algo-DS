@@ -70,6 +70,12 @@ public class TicTacToe extends JPanel {
                     newGame();
                 }
 
+                if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON || currentState == State.DRAW) {
+                    Timer delayTimer = new Timer(1000, ev -> showEndGameNotification());
+                    delayTimer.setRepeats(false);
+                    delayTimer.start();
+                }
+
                 repaint();
             }
         });
@@ -157,9 +163,16 @@ public class TicTacToe extends JPanel {
                 playSound(Seed.CROSS);
             }
 
-            currentPlayer = Seed.NOUGHT;
-            updateStatus();
             repaint();
+
+            if (currentState == State.PLAYING) {
+                currentPlayer = Seed.NOUGHT;
+                updateStatus();
+            } else {
+                Timer delayTimer = new Timer(2000, ev -> showEndGameNotification());
+                delayTimer.setRepeats(false);
+                delayTimer.start();
+            }
         }
     }
 
@@ -189,23 +202,61 @@ public class TicTacToe extends JPanel {
         }
     }
 
+    private void showEndGameNotification() {
+        String message = "";
+        String title = "Game Over";
+    
+        if (currentState == State.CROSS_WON) {
+            message = (gameMode == 1) ? "You lost! Better luck next time." : "'X' wins!";
+        } else if (currentState == State.NOUGHT_WON) {
+            message = (gameMode == 1) ? "Congratulations! You won!" : "'O' wins!";
+        } else if (currentState == State.DRAW) {
+            message = "It's a draw! Well played.";
+        }
+    
+        String[] options = {"New Game", "Exit"};
+        int choice = JOptionPane.showOptionDialog(this,
+                message, title,
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                null, options, options[0]);
+    
+        if (choice == 0) { // New Game
+            newGame();
+        } else if (choice == 1) { // Exit
+            System.exit(0);
+        }
+    }
+    
     public void newGame() {
-        countdownTimer.stop();
-        aiMoveDelayTimer.stop();
-
+        // Hentikan timer jika aktif
+        if (countdownTimer.isRunning()) {
+            countdownTimer.stop();
+        }
+        if (aiMoveDelayTimer.isRunning()) {
+            aiMoveDelayTimer.stop();
+        }
+    
+        // Reset papan
         for (int row = 0; row < Board.ROWS; ++row) {
             for (int col = 0; col < Board.COLS; ++col) {
                 board.cells[row][col].content = Seed.NO_SEED;
             }
         }
-        currentPlayer = Seed.NOUGHT;
+    
+        // Atur ulang status permainan
+        currentPlayer = Seed.NOUGHT; // Pemain pertama bisa diatur ulang ke NOUGHT (O)
         currentState = State.PLAYING;
         updateStatus();
-
+    
+        // Reset timer jika mode 2 pemain
         if (gameMode == 2) {
             startTurnTimer();
         }
+    
+        // Perbarui UI
+        repaint();
     }
+    
 
     @Override
     public void paintComponent(Graphics g) {
