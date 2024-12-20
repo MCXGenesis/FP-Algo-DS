@@ -88,7 +88,7 @@ public class StartMenu extends JFrame {
             button.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     // Ganti warna latar belakang saat mouse masuk
-                    button.setBackground(new Color(200, 200, 200)); // Warna latar belakang saat hover
+                    button.setBackground(new Color(92, 92, 179)); // Warna latar belakang saat hover
                 }
 
                 public void mouseExited(java.awt.event.MouseEvent evt) {
@@ -115,9 +115,12 @@ public class StartMenu extends JFrame {
                 }
             });
 
-            buttonContainer.add(Box.createRigidArea(new Dimension(0, 20))); // Tambahkan spasi antar tombol
+            buttonContainer.add(Box.createRigidArea(new Dimension(0, 30))); // Tambahkan spasi antar tombol
             buttonContainer.add(button);
         }
+        buttonContainer.revalidate();
+        buttonContainer.repaint();
+        setVisible(true);
         SoundPlayer.playSound(getName());
 
         // Timer fade-in
