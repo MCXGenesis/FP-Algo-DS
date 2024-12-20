@@ -1,3 +1,4 @@
+
 package sudoku;
 
 import java.awt.*;
@@ -75,7 +76,9 @@ public class SudokuMain extends JFrame {
         JMenuItem menuExitGame = new JMenuItem("Exit");
 
         menuNewGame.addActionListener(e -> showDifficultyDialog());
-        menuExitGame.addActionListener(e -> System.exit(0));
+        menuExitGame.addActionListener(e -> {
+            dispose(); // Close the current SudokuMain window
+        });
 
         // Add menu items to the "File" menu
         menuFile.add(menuNewGame);
@@ -145,7 +148,5 @@ public class SudokuMain extends JFrame {
         SudokuMain sudoku = new SudokuMain();
         sudoku.setVisible(true);
         sudoku.showDifficultyDialog();
-        
-
     }
 }

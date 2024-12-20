@@ -92,7 +92,11 @@ public class StartMenu extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     switch (button.getText()) {
                         case "Sudoku":
-                            SwingUtilities.invokeLater(() -> new SudokuMain().showDifficultyDialog());
+                        SwingUtilities.invokeLater(() -> {
+                            SudokuMain sudokuMain = new SudokuMain();
+                            sudokuMain.setVisible(true);
+                            sudokuMain.showDifficultyDialog();
+                        });
                             break;
                         case "Tictactoe":
                             SwingUtilities.invokeLater(() -> new TicTacToe().show());
