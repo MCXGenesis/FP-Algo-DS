@@ -113,7 +113,7 @@ public class TicTacToe extends JPanel {
             }
         });
 
-        aiMoveDelayTimer = new Timer(3000, e -> performAIMove());
+        aiMoveDelayTimer = new Timer(2000, e -> performAIMove());
         aiMoveDelayTimer.setRepeats(false);
     }
 

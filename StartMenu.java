@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import javax.imageio.*;
-import java.io.*;
 
 public class StartMenu extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -22,9 +20,9 @@ public class StartMenu extends JFrame {
         try {
             backg = ImageIO.read(getClass().getResourceAsStream("image/apcb.png"));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         setTitle("Welcome to Sudoku");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -37,7 +35,7 @@ public class StartMenu extends JFrame {
         panel.setBackground(Color.WHITE);
         panel.setBounds(0, 0, 800, 600);
         panel.setLayout(null);
-        add(panel); // Add the panel to 'this' JFrame
+        add(panel);
 
         // Custom font (fallback to a default)
         Font customFont, titleFont = null;
@@ -56,8 +54,6 @@ public class StartMenu extends JFrame {
         title.setFont(titleFont);
         title.setBounds(200, 50, 400, 100);
         panel.add(title);
-
-        //Supporting text
 
         // Button container
         JPanel buttonContainer = new JPanel();
@@ -92,14 +88,30 @@ public class StartMenu extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     switch (button.getText()) {
                         case "Sudoku":
-                        SwingUtilities.invokeLater(() -> {
-                            SudokuMain sudokuMain = new SudokuMain();
-                            sudokuMain.setVisible(true);
-                            sudokuMain.showDifficultyDialog();
-                        });
+                            SwingUtilities.invokeLater(() -> {
+                                SudokuMain sudokuMain = new SudokuMain();
+                                sudokuMain.setVisible(true);
+                                sudokuMain.showDifficultyDialog();
+                            });
                             break;
                         case "Tictactoe":
-                            SwingUtilities.invokeLater(() -> new TicTacToe().show());
+                            SwingUtilities.invokeLater(() -> {
+                                JFrame frame = new JFrame(TicTacToe.TITLE);
+                                TicTacToe ticTacToe = new TicTacToe();
+
+                                JPanel parentPanel = new JPanel();
+                                parentPanel.setLayout(new BorderLayout());
+                                if (ticTacToe.timerLabel != null) {
+                                    parentPanel.add(ticTacToe.timerLabel, BorderLayout.NORTH);
+                                }
+                                parentPanel.add(ticTacToe, BorderLayout.CENTER);
+
+                                frame.setContentPane(parentPanel);
+                                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Jangan tutup aplikasi utama
+                                frame.pack();
+                                frame.setLocationRelativeTo(null);
+                                frame.setVisible(true);
+                            });
                             break;
                         case "Exit":
                             fadeEndTimer.start();
@@ -131,46 +143,20 @@ public class StartMenu extends JFrame {
             }
         });
 
-        fadeEndTimer = new Timer(100, new ActionListener() { //plus system exit
+        fadeEndTimer = new Timer(100, new ActionListener() { // plus system exit
             @Override
             public void actionPerformed(ActionEvent e) {
                 opacity -= 0.05f;
                 if (opacity <= 0.05f) {
                     opacity = 0f;
                     fadeEndTimer.stop();
-                    System.exit(0); //exit after fade
+                    System.exit(0); // exit after fade
                 }
                 setOpacity(opacity);
                 repaint();
-                
             }
-    
         });
 
         fadeStartTimer.start();
-    }
-
-    // @Override
-    // protected void paintComponent(Graphics g) {
-    //     super.paintComponents(g);
-    //     Graphics2D g2d = (Graphics2D) g;
-    //     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-    //     super.paintComponents(g2d);
-    // }
-
-    // @Override
-    // public void paint(Graphics g) {
-    //     super.paint(g);
-    //     if (backg != null) {
-    //         g.drawImage(backg, 0, 0, getWidth(), getHeight(), this);
-    //     }
-    // }
-
-    public static void main(String[] args) {
-        // Run the menu
-        SwingUtilities.invokeLater(() -> {
-            StartMenu menu = new StartMenu();
-            menu.setVisible(true);
-        });
     }
 }
