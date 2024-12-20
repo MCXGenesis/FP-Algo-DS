@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.concurrent.Flow;
-
 import javax.swing.*;
 
 /**
@@ -19,86 +18,95 @@ public class SudokuMain extends JFrame {
 
     // Constructor
     public SudokuMain() {
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximize the frame
+
+        // Set up the frame
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true); // Remove window decorations for fullscreen mode
-        setMinimumSize(new Dimension(800 ,600));
+        setSize(800 ,600);
+        setLocationRelativeTo(null); // Center the window
+        setLayout(new BorderLayout()); // Use null layout for manual positioning
+    
+        // Container
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
-        cp.add(board, BorderLayout.CENTER);
+        cp.setSize(600, 600);
 
-           // Add the game board panel to the center with a wrapper
-           JPanel boardWrapper = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                // Ensure the board remains square
-                int size = Math.min(getWidth(), getHeight());
-                board.setBounds((getWidth() - size) / 2, (getHeight() - size) / 2, size, size);
-            }
-        };
-        boardWrapper.setLayout(null); // Use null layout for manual resizing
-    
-        boardWrapper.add(board); // Add the board to the wrapper
-        cp.add(boardWrapper, BorderLayout.CENTER);
+        // Background color and panel
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.WHITE);
+        panel.setLayout(null); // Use null layout for manual positioning
 
-        // Add a resize listener to keep the board square
-        addComponentListener(new ComponentAdapter() {
+        // Add the board to the panel
+        panel.add(board);
+        board.setBounds(0, 0, 600, 600); // Initial bounds
+
+        // Add a component listener to keep the board square
+        panel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                boardWrapper.repaint(); // Repaint on resize to update the square aspect ratio
+                int size = Math.min(panel.getWidth(), panel.getHeight());
+                board.setBounds((panel.getWidth() - size) / 2, (panel.getHeight() - size) / 2, size, size);
             }
         });
 
-        // Menambahkan dropdown untuk memilih mode tampilan
-        modeSelector = new JComboBox<>(new String[]{"Light Mode", "Dark Mode"});
-        modeSelector.addActionListener(e -> changeMode(modeSelector.getSelectedItem().toString()));
+        // Add the panel to the content pane
+        cp.add(panel, BorderLayout.CENTER);
 
-        // Panel bawah untuk tombol dan dropdown
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(modeSelector, BorderLayout.EAST);
-        cp.add(bottomPanel, BorderLayout.SOUTH);
 
-        // Menu bar
+    
+
+//         // Menambahkan dropdown untuk memilih mode tampilan
+//         modeSelector = new JComboBox<>(new String[]{"Light Mode", "Dark Mode"});
+//         modeSelector.addActionListener(e -> changeMode(modeSelector.getSelectedItem().toString()));
+
+//         // Panel bawah untuk tombol dan dropdown
+//         JPanel bottomPanel = new JPanel(new BorderLayout());
+//         bottomPanel.add(modeSelector, BorderLayout.EAST);
+//         cp.add(bottomPanel, BorderLayout.SOUTH);
+
+
         JMenuBar menuBar = new JMenuBar();
 
-        // File Menu
-        JMenu menuFile = new JMenu("Menu");
+        // Create the "File" menu
+        JMenu menuFile = new JMenu("File");
+
+        // Create menu items
         JMenuItem menuNewGame = new JMenuItem("New Game");
         JMenuItem menuExitGame = new JMenuItem("Exit");
-        menuExitGame.addActionListener(e -> System.exit(0));
-        menuNewGame.addActionListener(e -> showDifficultyDialog());
 
+        menuNewGame.addActionListener(e -> showDifficultyDialog());
+        menuExitGame.addActionListener(e -> System.exit(0));
+
+        // Add menu items to the "File" menu
         menuFile.add(menuNewGame);
         menuFile.addSeparator();
         menuFile.add(menuExitGame);
 
         // Add "File" menu to the menu bar
         menuBar.add(menuFile);
-        cp.add(menuBar, BorderLayout.PAGE_START);
 
-        pack(); // Pack the UI components, instead of using setSize()
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // to handle window-closing
-        setTitle("Sudoku");
-        setVisible(true);
+        // Add the menu bar to the frame
+        setJMenuBar(menuBar);
+
+
+
+//     /**
+//      * Mengubah mode tampilan berdasarkan pilihan pengguna
+//      */
+//     private void changeMode(String mode) {
+//         if (mode.equals("Dark Mode")) {
+//             getContentPane().setBackground(Color.DARK_GRAY);
+//             modeSelector.setBackground(Color.GRAY);
+//             modeSelector.setForeground(Color.WHITE);
+//             board.setBackground(Color.BLACK); // Sesuaikan dengan implementasi `GameBoardPanel`
+//         } else {
+//             getContentPane().setBackground(Color.WHITE);
+//             modeSelector.setBackground(Color.WHITE);
+//             modeSelector.setForeground(Color.BLACK);
+//             board.setBackground(Color.WHITE); // Sesuaikan dengan implementasi `GameBoardPanel`
+//         }
+//     }
     }
-
-    /**
-     * Mengubah mode tampilan berdasarkan pilihan pengguna
-     */
-    private void changeMode(String mode) {
-        if (mode.equals("Dark Mode")) {
-            getContentPane().setBackground(Color.DARK_GRAY);
-            modeSelector.setBackground(Color.GRAY);
-            modeSelector.setForeground(Color.WHITE);
-            board.setBackground(Color.BLACK); // Sesuaikan dengan implementasi `GameBoardPanel`
-        } else {
-            getContentPane().setBackground(Color.WHITE);
-            modeSelector.setBackground(Color.WHITE);
-            modeSelector.setForeground(Color.BLACK);
-            board.setBackground(Color.WHITE); // Sesuaikan dengan implementasi `GameBoardPanel`
-        }
-    }
-
     /**
      * Menampilkan dialog pemilihan tingkat kesulitan
      */
@@ -131,37 +139,13 @@ public class SudokuMain extends JFrame {
         }
     }
 
-    /**
-     * Menampilkan halaman sambutan untuk memilih permainan
-     */
-    public static void showWelcomePage() {
-        // Membuat opsi yang akan muncul di halaman selamat datang
-        Object[] options = {"Start Game", "Exit"};
-
-        // Menampilkan dialog sambutan
-        int choice = JOptionPane.showOptionDialog(
-                null,
-                "Welcome to Sudoku Game!\nChoose an option to proceed:",
-                "Welcome",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        // Tindakan berdasarkan pilihan pengguna
-        if (choice == 0) {
-            // Memulai permainan dengan dialog tingkat kesulitan
-            new SudokuMain().showDifficultyDialog();
-        } else {
-            // Keluar dari aplikasi
-            System.exit(0);
-        }
-    }
-
+    
     /** The entry main() entry method */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> showWelcomePage());
+        SudokuMain sudoku = new SudokuMain();
+        sudoku.setVisible(true);
+        sudoku.showDifficultyDialog();
+        
+
     }
 }
