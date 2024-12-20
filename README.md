@@ -1,6 +1,6 @@
 ### FP-Algo-DS
 
-# Kelompok sekian dari Final Project Algoritma dan Struktur Data
+# Kelompok Chill-Chall-Chull dari Final Project Algoritma dan Struktur Data
 
 next progress:
 flow
