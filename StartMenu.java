@@ -18,26 +18,35 @@ public class StartMenu extends JFrame {
 
     public StartMenu() {
         try {
-            backg = ImageIO.read(getClass().getResourceAsStream("image/apcb.png"));
+            backg = ImageIO.read(getClass().getResourceAsStream("image/menu.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        setTitle("Welcome to Sudoku");
+        //setTitle("Welcome to Sudoku");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
-        setLayout(null);
 
-        // Background color and panel
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.WHITE);
-        panel.setBounds(0, 0, 800, 600);
-        panel.setLayout(null);
-        add(panel);
+        // Aktifkan fullscreen
+        enableFullScreen();
 
-        // Custom font (fallback to a default)
+        // Panel utama untuk seluruh komponen
+        JPanel mainPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backg != null) {
+                    g.drawImage(backg, 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+            }
+        };
+        mainPanel.setLayout(null);
+        add(mainPanel);
+
+        // Custom font (fallback ke default)
         Font customFont, titleFont = null;
         try {
             titleFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/fonts/OMORI_GAME2.ttf")).deriveFont(96f);
@@ -48,70 +57,56 @@ public class StartMenu extends JFrame {
             customFont = new Font("Arial", Font.BOLD, 36);
         }
 
-        // Title
-        JLabel title = new JLabel("WELCOME", SwingConstants.CENTER);
-        title.setForeground(Color.BLACK);
-        title.setFont(titleFont);
-        title.setBounds(200, 50, 400, 100);
-        panel.add(title);
+        // Judul
+//        JLabel title = new JLabel("WELCOME", SwingConstants.CENTER);
+//        title.setForeground(Color.BLACK);
+//        title.setFont(titleFont);
+//        title.setBounds(getWidth() / 2 - 200, 50, 400, 100);
+//        mainPanel.add(title);
 
-        // Button container
+        // Kontainer tombol
         JPanel buttonContainer = new JPanel();
-        buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 20));
-        buttonContainer.setBackground(Color.WHITE);
-        buttonContainer.setBounds(100, 450, 600, 80);
-        panel.add(buttonContainer);
+        buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.Y_AXIS)); // Ubah ke vertikal
+        buttonContainer.setBackground(new Color(0, 0, 0, 0));
+        buttonContainer.setBounds(getWidth() / 2 - 100, 300, 200, 300); // Reposisi dan sesuaikan ukuran
+        mainPanel.add(buttonContainer);
 
-        // Buttons
+        // Tombol
         String[] buttonNames = {"Sudoku", "Tictactoe", "Exit"};
         for (String buttonName : buttonNames) {
             JButton button = new JButton(buttonName);
             button.setFont(customFont.deriveFont(36f));
             button.setForeground(Color.BLACK);
-            button.setBackground(Color.WHITE);
+            //button.setBackground(Color.WHITE);
+            button.setBackground(new Color(0, 0, 0, 0)); // Background transparan
             button.setFocusPainted(false);
+            button.setContentAreaFilled(true);
+            button.setOpaque(true);
+            button.setAlignmentX(Component.CENTER_ALIGNMENT); // Agar tombol sejajar di tengah
 
-            // Button hover effects
+            // Efek hover dengan perubahan warna
             button.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    button.setBackground(Color.LIGHT_GRAY);
+                    // Ganti warna latar belakang saat mouse masuk
+                    button.setBackground(new Color(200, 200, 200)); // Warna latar belakang saat hover
                 }
 
                 public void mouseExited(java.awt.event.MouseEvent evt) {
-                    button.setBackground(Color.WHITE);
+                    // Kembali ke warna latar belakang normal saat mouse keluar
+                    button.setBackground(new Color(0, 0, 0, 0)); // Warna latar belakang tombol normal
                 }
             });
 
-            // Button actions
+            // Aksi tombol
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     switch (button.getText()) {
                         case "Sudoku":
-                            SwingUtilities.invokeLater(() -> {
-                                SudokuMain sudokuMain = new SudokuMain();
-                                sudokuMain.setVisible(true);
-                                sudokuMain.showDifficultyDialog();
-                            });
+                            openSudoku();
                             break;
                         case "Tictactoe":
-                            SwingUtilities.invokeLater(() -> {
-                                JFrame frame = new JFrame(TicTacToe.TITLE);
-                                TicTacToe ticTacToe = new TicTacToe();
-
-                                JPanel parentPanel = new JPanel();
-                                parentPanel.setLayout(new BorderLayout());
-                                if (ticTacToe.timerLabel != null) {
-                                    parentPanel.add(ticTacToe.timerLabel, BorderLayout.NORTH);
-                                }
-                                parentPanel.add(ticTacToe, BorderLayout.CENTER);
-
-                                frame.setContentPane(parentPanel);
-                                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Jangan tutup aplikasi utama
-                                frame.pack();
-                                frame.setLocationRelativeTo(null);
-                                frame.setVisible(true);
-                            });
+                            openTicTacToe();
                             break;
                         case "Exit":
                             fadeEndTimer.start();
@@ -120,16 +115,12 @@ public class StartMenu extends JFrame {
                 }
             });
 
+            buttonContainer.add(Box.createRigidArea(new Dimension(0, 20))); // Tambahkan spasi antar tombol
             buttonContainer.add(button);
         }
-
         SoundPlayer.playSound(getName());
 
-        // Set the JFrame visible
-        setOpacity(0.0f);
-        setVisible(true);
-
-        // Initialize and start the fade-in timer
+        // Timer fade-in
         fadeStartTimer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -139,24 +130,62 @@ public class StartMenu extends JFrame {
                     fadeStartTimer.stop();
                 }
                 setOpacity(opacity);
-                repaint();
             }
         });
 
-        fadeEndTimer = new Timer(100, new ActionListener() { // plus system exit
+        // Timer fade-out
+        fadeEndTimer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 opacity -= 0.05f;
                 if (opacity <= 0.05f) {
                     opacity = 0f;
                     fadeEndTimer.stop();
-                    System.exit(0); // exit after fade
+                    System.exit(0);
                 }
                 setOpacity(opacity);
-                repaint();
             }
         });
 
         fadeStartTimer.start();
+        setOpacity(0.0f);
+        setVisible(true);
+    }
+
+    private void enableFullScreen() {
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setResizable(false);
+        device.setFullScreenWindow(this);
+    }
+
+    private void openSudoku() {
+        SwingUtilities.invokeLater(() -> {
+            dispose(); // Tutup menu utama
+            SudokuMain sudokuMain = new SudokuMain();
+            sudokuMain.setVisible(true);
+            sudokuMain.showDifficultyDialog();
+        });
+    }
+
+    private void openTicTacToe() {
+        SwingUtilities.invokeLater(() -> {
+            dispose(); // Tutup menu utama
+            JFrame frame = new JFrame(TicTacToe.TITLE);
+            TicTacToe ticTacToe = new TicTacToe();
+
+            JPanel parentPanel = new JPanel();
+            parentPanel.setLayout(new BorderLayout());
+            if (ticTacToe.timerLabel != null) {
+                parentPanel.add(ticTacToe.timerLabel, BorderLayout.NORTH);
+            }
+            parentPanel.add(ticTacToe, BorderLayout.CENTER);
+
+            frame.setContentPane(parentPanel);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }
