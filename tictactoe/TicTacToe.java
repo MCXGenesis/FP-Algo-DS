@@ -20,6 +20,7 @@ public class TicTacToe extends JPanel {
     public static final Font FONT_STATUS = new Font("OCR A Extended", Font.PLAIN, 14);
 
     private Board board;
+    private Image backgroundImage;
     private State currentState;
     private Seed currentPlayer;
     private final JLabel statusBar;
@@ -46,6 +47,8 @@ public class TicTacToe extends JPanel {
             timerLabel.setBackground(new Color(0, 0, 0, 0)); // Transparan awal
             timerLabel.setForeground(Color.BLACK);
         }
+
+        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/night.png");
 
         super.addMouseListener(new MouseAdapter() {
             @Override
@@ -258,38 +261,29 @@ public class TicTacToe extends JPanel {
         // Perbarui UI
         repaint();
     }
-    
+
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(COLOR_BG);
-
-        board.paint(g);
-
-        if (currentState == State.PLAYING) {
-            if (gameMode == 1 && currentPlayer == Seed.CROSS) {
-                statusBar.setText("AI is thinking...");
-            }
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
+        board.paint(g);
     }
 
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame(TITLE);
-            TicTacToe ticTacToe = new TicTacToe();
-
-            JPanel parentPanel = new JPanel();
-            parentPanel.setLayout(new BorderLayout());
-            if (ticTacToe.timerLabel != null) {
-                parentPanel.add(ticTacToe.timerLabel, BorderLayout.NORTH);
-            }
-            parentPanel.add(ticTacToe, BorderLayout.CENTER);
-
-            frame.setContentPane(parentPanel);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            TicTacToe game = new TicTacToe();
+
+            if (game.gameMode == 2) {
+                frame.add(game.timerLabel, BorderLayout.NORTH);
+            }
+
+            frame.add(game, BorderLayout.CENTER);
             frame.pack();
-            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
     }
