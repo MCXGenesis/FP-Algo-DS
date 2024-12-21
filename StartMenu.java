@@ -1,12 +1,3 @@
-/**
- * ES234317-Algorithm and Data Structures
- * Semester Ganjil, 2024/2025
- * Group Capstone Project
- * Group #3
- * 1 - 5026231107 - Naufal Maula Nabil
- * 2 - 5026231228 - Annisa Nur Fauzi
- * 3 - 5026231229 - Lailatul Fitaliqoh
- */
 import javax.swing.*;
 import sudoku.SoundPlayer;
 import sudoku.SudokuMain;
@@ -27,7 +18,7 @@ public class StartMenu extends JFrame {
 
     public StartMenu() {
         try {
-            backg = ImageIO.read(getClass().getResourceAsStream("image/menu.png"));
+            backg = ImageIO.read(getClass().getResourceAsStream("Assets\\image\\menu.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,9 +49,9 @@ public class StartMenu extends JFrame {
         // Custom font (fallback ke default)
         Font customFont, titleFont = null;
         try {
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/fonts/OMORI_GAME2.ttf")).deriveFont(96f);
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("Assets\\fonts\\OMORI_GAME2.ttf")).deriveFont(96f);
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(titleFont);
-            customFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/fonts/OMORI_GAME2.ttf")).deriveFont(36f);
+            customFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("Assets\\fonts\\OMORI_GAME2.ttf")).deriveFont(36f);
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
         } catch (Exception e) {
             customFont = new Font("Arial", Font.BOLD, 36);

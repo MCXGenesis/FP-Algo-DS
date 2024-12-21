@@ -21,10 +21,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * For Eclipse, place the audio file under "src", which will be copied into "bin".
  */
 public enum SoundEffect {
-   PLAYER_X("tictactoe/XO.wav"),
-   PLAYER_O("tictactoe/PLAYER_O.wav"),
-   WINNER("tictactoe/Winner.wav"),
-   DRAW("tictactoe/Draw.wav");
+   PLAYER_X("Assets\\Sounds\\XO.wav"),
+   PLAYER_O("Assets\\Sounds\\PLAYER_O.wav"),
+   WINNER("Assets\\Sounds\\Winner.wav"),
+   DRAW("Assets\\Sounds\\Draw.wav");
 
    /** Nested enumeration for specifying volume */
    public static enum Volume {
