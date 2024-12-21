@@ -1,6 +1,5 @@
 import javax.sound.sampled.*;
 import javax.swing.*;
-import sudoku.SoundPlayer;
 import sudoku.SudokuMain;
 import tictactoe.TicTacToe;
 import java.awt.*;
@@ -65,11 +64,11 @@ public class StartMenu extends JFrame {
         JPanel buttonContainer = new JPanel();
         buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.Y_AXIS)); // Ubah ke vertikal
         buttonContainer.setBackground(new Color(0, 0, 0, 0));
-        buttonContainer.setBounds(getWidth() / 2 - 100, 300, 200, 300); // Reposisi dan sesuaikan ukuran
+        buttonContainer.setBounds(getWidth() / 2 - 100, 240, 200, 360); // Reposisi dan sesuaikan ukuran
         mainPanel.add(buttonContainer);
 
         // Tombol
-        String[] buttonNames = {"Sudoku", "Tictactoe", "Exit"};
+        String[] buttonNames = {"Sudoku", "Tictactoe", "Connect4", "Exit"};
         for (String buttonName : buttonNames) {
             JButton button = new JButton(buttonName);
             button.setFont(customFont.deriveFont(36f));
@@ -105,6 +104,9 @@ public class StartMenu extends JFrame {
                             stopBackgroundMusic(); // Hentikan musik saat masuk game
                             openTicTacToe();
                             break;
+                        case "Connect4":
+                            stopBackgroundMusic(); // Hentikan musik saat masuk game
+               
                         case "Exit":
                             fadeEndTimer.start();
                             break;
