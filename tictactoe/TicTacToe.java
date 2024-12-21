@@ -6,6 +6,8 @@ import java.io.Serial;
 import javax.swing.*;
 
 public class TicTacToe extends JPanel {
+    public static final int ROWS =3;
+    public static final int COLS =3;
     @Serial
     private static final long serialVersionUID = 1L;
     public JLabel timerLabel; // Timer tidak diinisialisasi untuk gameMode == 1

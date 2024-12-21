@@ -1,15 +1,16 @@
 package tictactoe;
 
 import java.awt.*;
+import java.awt.Toolkit;
+
 /**
  * The Cell class models each individual cell of the game board.
  */
 public class Cell {
     // Define named constants for drawing
-    public static final int SIZE = 120; // cell width/height (square)
-    // Symbols (cross/nought) are displayed inside a cell, with padding from border
-    public static final int PADDING = SIZE / 5;
-    public static final int SEED_SIZE = SIZE - PADDING * 2;
+    public static int SIZE; // cell width/height (square), now dynamic
+    public static int PADDING; // padding is based on SIZE
+    public static int SEED_SIZE; // size of the seed
     public static final int SEED_STROKE_WIDTH = 8; // pen's stroke width
 
     // Define properties (package-visible)
@@ -17,6 +18,27 @@ public class Cell {
     Seed content;
     /** Row and column of this cell */
     int row, col;
+
+    /** Static block to calculate dynamic SIZE based on screen size */
+    static {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+
+        // Subtract space for UI elements (e.g., title bar, status bar)
+        int uiHeight = 100; // Approximate height for title and status bar
+        int availableHeight = screenHeight - uiHeight;
+
+        // Calculate size based on smallest dimension (square grid)
+        int cellWidth = screenWidth / TicTacToe.COLS;
+        int cellHeight = availableHeight / TicTacToe.ROWS;
+        SIZE = Math.min(cellWidth, cellHeight);
+
+        // Update dependent constants
+        PADDING = SIZE / 5;
+        SEED_SIZE = SIZE - PADDING * 2;
+    }
+
 
     /** Constructor to initialize this cell with the specified row and col */
     public Cell(int row, int col) {
