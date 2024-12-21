@@ -49,11 +49,11 @@ public class Cell extends JTextField {
                     if (enteredNumber == number) { // Jika input benar
                         status = CellStatus.CORRECT_GUESS;
                         setBackground(BG_CORRECT_GUESS);
-                        SoundPlayer.playSound("sudoku/benar sudoku.wav"); // Mainkan suara benar
+                        SoundPlayer.playSound("Assets\\Sounds\\benar sudoku.wav"); // Mainkan suara benar
                     } else { // Jika input salah
                         status = CellStatus.WRONG_GUESS;
                         setBackground(BG_WRONG_GUESS);
-                        SoundPlayer.playSound("sudoku/salah sudoku.wav"); // Mainkan suara salah
+                        SoundPlayer.playSound("Assets\\Sounds\\salah sudoku.wav"); // Mainkan suara salah
                     }
                 } catch (NumberFormatException ex) {
                     // Jika input bukan angka, kembalikan ke warna default

@@ -57,7 +57,8 @@ public class TicTacToe extends JPanel {
             timerLabel.setForeground(Color.BLACK);
         }
 
-        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/night.png");
+        backgroundImage = Toolkit.getDefaultToolkit().getImage("Assets\\image\\n" + //
+                        "ight.png");
 
         super.addMouseListener(new MouseAdapter() {
             @Override
