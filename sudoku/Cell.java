@@ -1,8 +1,12 @@
 package sudoku;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.swing.JTextField;
 /**
  * The Cell class model the cells of the Sudoku puzzle, by customizing (subclass)
@@ -19,8 +23,18 @@ public class Cell extends JTextField {
     public static final Color BG_TO_GUESS  = Color.YELLOW;
     public static final Color BG_CORRECT_GUESS = new Color(0, 216, 0);
     public static final Color BG_WRONG_GUESS   = new Color(216, 0, 0);
-    public static final Font FONT_NUMBERS = new Font("OCR A Extended", Font.PLAIN, 28);
-
+    public static final Font FONT_NUMBERS;
+    static {
+        Font omori2Font = null;
+        try {
+            InputStream is = Cell.class.getResourceAsStream("OMORI_GAME2.ttf");
+            omori2Font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(28f);
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            omori2Font = new Font("OCR A Extended", Font.PLAIN, 28); // Fallback font
+        }
+        FONT_NUMBERS = omori2Font;
+    }
     // Define properties (package-visible)
     /** The row and column number [0-8] of this cell */
     int row, col;
